@@ -1,0 +1,5 @@
+.woocommerce table.form-table select.filter_select{width:auto;}
+.form-table.filter-custom-table td{padding:5px}
+table thead th.manage-column{text-align: center;}
+#export-csv{float: right;}
+#final-table tbody tr td:not(:first-of-type){text-align: right;}
