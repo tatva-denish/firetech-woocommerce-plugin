@@ -1,25 +1,14 @@
 <?php
-//echo 'debug27';exit;
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
 /**
- * WC_Report_Custom_Sales_By_Date
- *
- * @author      WooThemes
- * @category    Admin
- * @package     WooCommerce/Admin/Reports
- * @version     2.1.0
+ * WC_Report_Custom_Inventory_Custom
+ * 
  */
 class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
-
-    /**
-     * Chart colors.
-     *
-     * @var array
-     */
-    public $chart_colours = array();
 
     /**
      * The report data.
@@ -67,9 +56,10 @@ class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
         echo $table;
     }
 
-  
+    /**
+    *   getTableInventory : Function to Render Inventory Table
+    **/
     public function getTableInventory() {
-        global $wpdb;
         ?>
         <div style="margin-top: 10px;">
             <div class="pdb-searchform">

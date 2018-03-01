@@ -1,19 +1,15 @@
 <?php
 
 /**
- * Admin Reports
+ * Firetech Custom Admin Reports
  *
- * Functions used for displaying sales and customer reports in admin.
+ * Functions used for displaying sales and customer reports in Admin.
  *
- * @author      WooThemes
- * @category    Admin
- * @package     WooCommerce/Admin/Reports
- * @version     2.0.0
  */
 if (!defined('ABSPATH')) {
     exit;
 }
-//echo 'siddhi';exit;
+
 if (class_exists('WC_Admin_Custom_Reports', false)) {
     return;
 }
@@ -23,17 +19,17 @@ if (class_exists('WC_Admin_Custom_Reports', false)) {
  */
 class WC_Admin_Custom_Reports {
 
-    
-        
     /**
-     * Handles output of the reports page in admin.
+     * Handles output of the FireTech Reports page in admin.
      */
     public static function output() {
-         global $woocommerce;
+        global $woocommerce;
+        
         $reports = self::get_reports();
         $first_tab = array_keys($reports);
         $current_tab = !empty($_GET['tab']) ? sanitize_title($_GET['tab']) : $first_tab[0];
         $current_report = isset($_GET['report']) ? sanitize_title($_GET['report']) : current(array_keys($reports[$current_tab]['reports']));
+        
         include_once( $woocommerce->plugin_path() . '/includes/admin/reports/class-wc-admin-report.php' );
         include_once( dirname(__FILE__) . '/views/html-admin-page-custom-reports.php' );
     }
@@ -96,8 +92,8 @@ class WC_Admin_Custom_Reports {
         global $woocommerce;
         $name = sanitize_title(str_replace('_', '-', $name));
         $class = 'WC_Report_Custom_' . str_replace('-', '_', $name);
-        include_once( WC_CUSTOM_REPORT_PLUGIN_FILE.'includes/admin/reports/class-wc-report-custom-' . $name . '.php' );
-        
+        include_once( WC_CUSTOM_REPORT_PLUGIN_FILE . 'includes/admin/reports/class-wc-report-custom-' . $name . '.php' );
+
         if (!class_exists($class)) {
             return;
         }

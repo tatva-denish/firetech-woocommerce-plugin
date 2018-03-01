@@ -3,3 +3,5 @@
 table thead th.manage-column{text-align: center;}
 #export-csv{float: right;}
 #final-table tbody tr td:not(:first-of-type){text-align: right;}
+.year-block{padding-right: 51px;}
+.status-block{vertical-align: top;}

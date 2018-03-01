@@ -5,10 +5,10 @@
  * @package WooCommerce/Admin/Reporting
  */
 
-//if ( ! defined( 'ABSPATH' ) ) {
-//	exit; // Exit if accessed directly.
-//}
-echo 'debug17';
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 ?>
 
 <div id="poststuff" class="woocommerce-reports-wide">
@@ -30,7 +30,6 @@ echo 'debug17';
 	<?php endif; ?>
 
 		<div class="stats_range">
-			<?php $this->get_export_button(); ?>
 			<ul>
 				<?php
 				foreach ( $ranges as $range => $name ) {
