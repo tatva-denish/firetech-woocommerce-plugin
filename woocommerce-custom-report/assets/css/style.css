@@ -1,3 +1,9 @@
+/**
+*
+*   Custom Style for Sales and Inventory Tables
+*
+**/
+
 .woocommerce table.form-table select.filter_select{width:auto;}
 .form-table.filter-custom-table td{padding:5px}
 table thead th.manage-column{text-align: center;}

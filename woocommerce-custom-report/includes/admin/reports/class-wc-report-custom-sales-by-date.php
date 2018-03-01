@@ -6,10 +6,6 @@ if (!defined('ABSPATH')) {
 /**
  * WC_Report_Custom_Sales_By_Date
  *
- * @author      WooThemes
- * @category    Admin
- * @package     WooCommerce/Admin/Reports
- * @version     2.1.0
  */
 class WC_Report_Custom_Sales_By_Date extends WC_Admin_Report {
 

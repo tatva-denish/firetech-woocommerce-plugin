@@ -33,22 +33,6 @@ class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
      * Output the report.
      */
     public function output_report() {
-        $ranges = array(
-            'year' => __('Year', 'woocommerce'),
-            'last_month' => __('Last month', 'woocommerce'),
-            'month' => __('This month', 'woocommerce'),
-            '7day' => __('Last 7 days', 'woocommerce'),
-        );
-
-        $current_range = !empty($_GET['range']) ? sanitize_text_field($_GET['range']) : '7day';
-
-        if (!in_array($current_range, array('custom', 'year', 'last_month', 'month', '7day'))) {
-            $current_range = '7day';
-        }
-
-        $this->check_current_range_nonce($current_range);
-        $this->calculate_current_range($current_range);
-
         global $woocommerce;
         include_once($woocommerce->plugin_path() . '/includes/admin/reports/class-wc-admin-report.php');
 
@@ -60,10 +44,11 @@ class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
     *   getTableInventory : Function to Render Inventory Table
     **/
     public function getTableInventory() {
+        $page = 'wc-custom-reports';
         ?>
         <div style="margin-top: 10px;">
             <div class="pdb-searchform">
-                <form id="sort_filter_form" action="?page=<?php echo $page; ?>" method="post">
+                <form id="sort_filter_form" action="?page=<?php echo $page; ?>&tab=inventory" method="post">
                     <input type="hidden" id="page_url" value="<?php echo admin_url('/admin.php?page=' . $page); ?>">                
                     <input type="hidden" value="sort_search" name="action">
                     <table class="form-table filter-custom-table">
@@ -80,11 +65,8 @@ class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
                             </tr>
                         </tbody>
                     </table>
-                
             </div>
         </div>
-            
-
             <table class="widefat page fixed" id="final-table-inventory" cellpadding="0" border="1" bordercolor="#e1e1e1">
                 <thead>
                     <tr class="">
@@ -94,7 +76,7 @@ class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
                         <th class="manage-column"><?php _e('Total Sales') ?></th>     
                         <th class="manage-column"><?php _e('Available Stock') ?></th>    
                         <th class="manage-column"><?php _e('Sold %') ?></th>
-                        <th class="manage-column"><?php _e('Unsold%') ?></th>      
+                        <th class="manage-column"><?php _e('Unsold %') ?></th>      
                     </tr>
                 </thead>
                 <tbody>
@@ -169,9 +151,6 @@ class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
                                 <td></td>                                
                                 <td></td>                              
                             </tr>
-                            <?php
-                      
-                    ?>
                 </tbody>
             </table>
         </form>

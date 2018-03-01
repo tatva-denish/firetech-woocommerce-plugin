@@ -89,7 +89,7 @@ function export_to_csv() {
         $arr_csv_values = array();
         $i = 0;
         $arr_month_and_total = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC', 'Total'];
-        
+
         /*  Access Sales Data JSON Object   */
         foreach ($sales_data_obj as $sales_data_ojbs) {
             $j = 0;
@@ -103,7 +103,7 @@ function export_to_csv() {
                     if ($j == 0) {
                         $arr_csv_values[$i]['month-' . $key] = $arr_month_and_total[$i];
                     }
-                    
+
                     $arr_csv_values[$i][$sales_key_field . '-' . $key] = $sales_data_ojb_inner;
                 }
                 $j++;
@@ -113,7 +113,7 @@ function export_to_csv() {
 
         $initial_year = (int) $inital_year_sting;
         $final_year = $initial_year - 1;
-        
+
         /*  Set Labels of Columns in CSV with dynamic Years   */
         $arr_csv_columns = array(
             'Month',
@@ -129,18 +129,28 @@ function export_to_csv() {
 
         $str_to_time_for_name = strtotime(date('YmdHis'));
 
-        $output_filename_paths = WC_CUSTOM_REPORT_PLUGIN_FILE . '/export/Firetech-Report-' . $initial_year . '-' . $final_year . '-' . $str_to_time_for_name . '.csv';
-        $output_filename_URI = plugin_dir_url(__FILE__) . '/export/Firetech-Report-' . $initial_year . '-' . $final_year . '-' . $str_to_time_for_name . '.csv';
+        $upload_dir = wp_upload_dir();
+        //The path of the directory that we need to create.
+        $directory_path = trailingslashit($upload_dir['basedir']) . 'export/';
+
+        //Check if the directory already exists.
+        if (!file_exists($directory_path)) {
+            //Directory does not exist, so lets create it.
+            mkdir($directory_path, 0777);
+        }
+        
+        $output_filename_paths = trailingslashit($upload_dir['basedir']) . 'export/Firetech-Report-' . $initial_year . '-' . $final_year . '-' . $str_to_time_for_name . '.csv';
+        $output_filename_URI = trailingslashit($upload_dir['baseurl']) . 'export/Firetech-Report-' . $initial_year . '-' . $final_year . '-' . $str_to_time_for_name . '.csv';
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename=data.csv');
         $output_handle = @fopen($output_filename_paths, 'w');
-        
+
         // Insert header row
         fputcsv($output_handle, $arr_csv_columns);
         foreach ($arr_csv_values as $arr_csv_valuess) {
             fputcsv($output_handle, $arr_csv_valuess);
         }
-        
+
         // Close output file stream
         fclose($output_handle);
 
