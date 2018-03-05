@@ -7,7 +7,13 @@
 .woocommerce table.form-table select.filter_select{width:auto;}
 .form-table.filter-custom-table td{padding:5px}
 table thead th.manage-column{text-align: center;}
-#export-csv{float: right;}
-#final-table tbody tr td:not(:first-of-type){text-align: right;}
+#export-csv{float: right;margin-left: 10px;}
+/*#final-table tbody tr td:not(:first-of-type), #final-table-inventory tbody tr td:not(:first-of-type){text-align: right;}*/
+#final-table tbody tr td:not(:first-of-type), #final-table-inventory tbody tr td:not(:nth-child(1)):not(:nth-child(2)),#final-table-inventory tbody tr td.original-stock-total{text-align: right;}
 .year-block{padding-right: 51px;}
 .status-block{vertical-align: top;}
+
+/*tr.disabled-class{background-color: #e5e5e5;}*/
+tr.disabled-class{background-color: red;}
+.status_notes{float: right;}
+.disable_block {height: 18px; background-color: red;margin-right: 10px;line-height: 25px;}

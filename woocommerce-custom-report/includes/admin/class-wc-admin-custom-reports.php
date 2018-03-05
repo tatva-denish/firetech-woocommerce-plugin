@@ -63,6 +63,17 @@ class WC_Admin_Custom_Reports {
                     )
                 ),
             ),
+            'inventory-paginate' => array(
+                'title' => __('Inventory with Pagination', 'woocommerce'),
+                'reports' => array(
+                    'inventory_custom' => array(
+                        'title' => __('Inventory Custom', 'woocommerce'),
+                        'description' => '',
+                        'hide_title' => true,
+                        'callback' => array(__CLASS__, 'get_report'),
+                    )
+                ),
+            ),
         );
 
         $reports = apply_filters('woocommerce_admin_reports', $reports);
