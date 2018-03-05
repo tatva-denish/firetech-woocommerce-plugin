@@ -14,6 +14,8 @@ table thead th.manage-column{text-align: center;}
 .status-block{vertical-align: top;}
 
 /*tr.disabled-class{background-color: #e5e5e5;}*/
-tr.disabled-class{background-color: red;}
+tr.disabled-class{background-color: orange;}
 .status_notes{float: right;}
-.disable_block {height: 18px; background-color: red;margin-right: 10px;line-height: 25px;}
+.search-btn{    line-height: 21px;
+    height: 25px;}
+.disable_block {height: 18px; background-color: orange;margin-right: 10px;line-height: 25px;}

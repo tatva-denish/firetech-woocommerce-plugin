@@ -18,7 +18,10 @@ class WC_Custom_Reports_Admin {
      */
     public function __construct() {
         add_action('admin_menu', array($this, 'add_wc_submenu_menu'), 25);
+        /* Enqueue Scripts only for our custom menu page */
+        if($_REQUEST['page'] == 'wc-custom-reports'){
         add_action('admin_enqueue_scripts', array($this, 'styles_and_scripts'));
+        }
     }
 
     /**
@@ -185,10 +188,11 @@ function export_inventory_csv() {
         $i = 0;
         $arr_month_and_total = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC', 'Total'];
 
-        /*  Access Sales Data JSON Object   */
+        /*  Access Inventory Data JSON Object   */
         foreach ($inventory_data_obj as $inventory_data_objs) {
             $j = 0;
             foreach ($inventory_data_objs as $inventory_key => $inventory_data_ojb) {
+                /* Get Varaint data into out csv value array */
                 if ($inventory_key == 'variants') {
                     if (isset($inventory_data_ojb) && !empty($inventory_data_ojb)) {
                         foreach ($inventory_data_ojb as $key => $inventory_data_ojb_value) {
@@ -202,7 +206,7 @@ function export_inventory_csv() {
                             $i++;
                         }
                     } 
-                } else if ($inventory_key != 'parent_product_id' && $inventory_key != 'is_enabled') {
+                } else if ($inventory_key != 'parent_product_id' && $inventory_key != 'is_enabled') { /* Skip values with keys parent_product_id and is_enabled */
                     $arr_csv_values[$i][$inventory_key] = $inventory_data_ojb;
                 } 
             }
