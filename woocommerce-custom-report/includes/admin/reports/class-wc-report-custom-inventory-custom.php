@@ -253,8 +253,8 @@ class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
                                 $variant_original_stock[] = $variant_value['original_stock'];
                                 $variant_total_sales[] = $variant_value['total_sales'];
                                 $variant_available_stock[] = $variant_value['available_stock'];
-                                $variant_stock_sold[] = (float) number_format($variant_value['stock_sold'], 2) / count($variant_value['stock_sold']);
-                                $variant_stock_unsold[] = (float) number_format($variant_value['stock_unsold'], 2) / count($variant_value['stock_unsold']);
+                                $variant_stock_sold[] = (count($variant_value['stock_sold']) > 0) ? (float) number_format($variant_value['stock_sold'], 2) / count($variant_value['stock_sold']) : 0.00;
+                                $variant_stock_unsold[] = (count($variant_value['stock_unsold']) > 0) ? (float) number_format($variant_value['stock_unsold'], 2) / count($variant_value['stock_unsold']) : 0.00;
 
                                 if ($variant_value['is_enabled'] != 1) {
                                     echo '<tr  class="disabled-class">';
@@ -283,8 +283,8 @@ class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
                             $variant_original_stock_total = array_sum($variant_original_stock);
                             $variant_total_sales_total = array_sum($variant_total_sales);
                             $variant_available_stock_total = array_sum($variant_available_stock);
-                            $variant_stock_sold_total = number_format((($variant_total_sales_total * 100) / $variant_original_stock_total), 2);
-                            $variant_stock_unsold_total = number_format((($variant_available_stock_total * 100) / $variant_original_stock_total), 2);
+                            $variant_stock_sold_total = ($variant_original_stock_total > 0) ? number_format((($variant_total_sales_total * 100) / $variant_original_stock_total), 2) : 0.00;
+                            $variant_stock_unsold_total = ($variant_original_stock_total > 0) ? number_format((($variant_available_stock_total * 100) / $variant_original_stock_total), 2) : 0.00;
                             if ($counter == count($arr_product['variants'])) {
                                 echo '<tr class="alternate">
                                         <td>Total</td>                                
@@ -402,23 +402,23 @@ class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
                 $availability = $product->get_availability();
 //                $available_stock = (isset($availability['availability'])) ? (int)$availability['availability'] : 0;
                 $available_stock = ($product->get_stock_quantity()) ? $product->get_stock_quantity() : 0;
-                 $phoen_product_query = '
-                    SELECT sum(se.`meta_value`) as total FROM `wp_woocommerce_order_itemmeta` as fs LEFT Join `wp_woocommerce_order_itemmeta` as se on fs.`order_item_id` = se.`order_item_id`  WHERE fs.`meta_key` = "_variation_id" AND fs.`meta_value` = '.$theid.' AND se.`meta_key` ="_qty"
+                $phoen_product_query = '
+                    SELECT sum(se.`meta_value`) as total FROM `wp_woocommerce_order_itemmeta` as fs LEFT Join `wp_woocommerce_order_itemmeta` as se on fs.`order_item_id` = se.`order_item_id`  WHERE fs.`meta_key` = "_variation_id" AND fs.`meta_value` = ' . $theid . ' AND se.`meta_key` ="_qty"
                     ';
                 $phoen_product_data = $wpdb->get_results($phoen_product_query, ARRAY_A);
 
                 $total_sales = ($phoen_product_data[0]['total']) ? ((int) $phoen_product_data[0]['total']) : 0;
                 $original_stock = $total_sales + $available_stock;
-                $stock_sold = number_format((($total_sales * 100) / $original_stock), 2);
-                $stock_unsold = number_format((($available_stock * 100) / $original_stock), 2);
+                $stock_sold = ($original_stock > 0) ? number_format((($total_sales * 100) / $original_stock), 2) : 0.00;
+                $stock_unsold = ($original_stock > 0) ? number_format((($available_stock * 100) / $original_stock), 2) : 0.00;
 
                 $variant_original_stock[$parent_id][] = $original_stock;
                 $variant_total_sales[$parent_id][] = $total_sales;
                 $variant_available_stock[$parent_id][] = $available_stock;
-                $variant_stock_sold[$parent_id][] = (float) number_format($stock_sold, 2) / count($stock_sold);
-                $variant_stock_unsold[$parent_id][] = (float) number_format($stock_unsold, 2) / count($stock_unsold);
+                $variant_stock_sold[$parent_id][] = (count($stock_sold) > 0) ? (float) number_format((float) $stock_sold, 2) / count($stock_sold) : 0.00;
+                $variant_stock_unsold[$parent_id][] = (count($stock_unsold) > 0) ? (float) number_format((float) $stock_unsold, 2) / count($stock_unsold) : 0.00;
 
-               
+
                 $arr_temp = array(
                     'title' => $thetitle,
                     'sku' => $sku,
@@ -434,8 +434,8 @@ class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
                     'variant_original_stock_total' => array_sum($variant_original_stock[$parent_id]),
                     'variant_total_sales_total' => array_sum($variant_total_sales[$parent_id]),
                     'variant_available_stock' => array_sum($variant_available_stock[$parent_id]),
-                    'variant_stock_sold' => (float) number_format(((array_sum($variant_total_sales[$parent_id]) * 100) / array_sum($variant_original_stock[$parent_id])), 2),
-                    'variant_stock_unsold' => (float) number_format(((array_sum($variant_available_stock[$parent_id]) * 100) / array_sum($variant_original_stock[$parent_id])), 2),
+                    'variant_stock_sold' => (array_sum($variant_original_stock[$parent_id]) > 0) ? (float) number_format(((array_sum($variant_total_sales[$parent_id]) * 100) / array_sum($variant_original_stock[$parent_id])), 2) : 0.00,
+                    'variant_stock_unsold' => (array_sum($variant_original_stock[$parent_id]) > 0) ? (float) number_format(((array_sum($variant_available_stock[$parent_id]) * 100) / array_sum($variant_original_stock[$parent_id])), 2) : 0.00,
                 );
                 $full_product_list[$parent_id]['variants'][] = $arr_temp;
                 $full_product_list[$parent_id]['total'][] = $arr_total;
@@ -446,8 +446,8 @@ class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
                 $total_sales = ($product->get_total_sales()) ? $product->get_total_sales() : 0;
                 $available_stock = ($product->get_stock_quantity() != '') ? $product->get_stock_quantity() : 0;
                 $original_stock = $total_sales + $available_stock;
-                $stock_sold = number_format((($total_sales * 100) / $original_stock), 2);
-                $stock_unsold = number_format((($available_stock * 100) / $original_stock), 2);
+                $stock_sold = ($original_stock > 0) ? number_format((float) (($total_sales * 100) / $original_stock), 2) : 0.00;
+                $stock_unsold = ($original_stock > 0) ? number_format((float) (($available_stock * 100) / $original_stock), 2) : 0.00;
 
                 $full_product_list[$theid] = array(
                     'title' => $thetitle,

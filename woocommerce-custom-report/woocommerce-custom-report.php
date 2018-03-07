@@ -19,7 +19,7 @@ class WC_Custom_Reports_Admin {
     public function __construct() {
         add_action('admin_menu', array($this, 'add_wc_submenu_menu'), 25);
         /* Enqueue Scripts only for our custom menu page */
-        if($_REQUEST['page'] == 'wc-custom-reports'){
+        if(isset($_REQUEST['page']) && $_REQUEST['page'] == 'wc-custom-reports'){
         add_action('admin_enqueue_scripts', array($this, 'styles_and_scripts'));
         }
     }

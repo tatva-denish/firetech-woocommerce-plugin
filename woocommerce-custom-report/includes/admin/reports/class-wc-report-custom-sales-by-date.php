@@ -47,7 +47,7 @@ class WC_Report_Custom_Sales_By_Date extends WC_Admin_Report {
      * @return object
      */
     function get_sales_report_data_by_month($year) {
-        global $woocommerce;
+        global $woocommerce, $wpdb;
         include_once( $woocommerce->plugin_path() . '/includes/admin/reports/class-wc-report-sales-by-date.php' );
         $output_array = array();
 
@@ -57,7 +57,9 @@ class WC_Report_Custom_Sales_By_Date extends WC_Admin_Report {
             foreach ($year_array as $year) {
                 /* Initialize object of WC_Report_Sales_By_Date */
                 $sales_by_date = new WC_Report_Sales_By_Date();
-
+                $sales_by_date->chart_groupby = 'day';
+                $sales_by_date->group_by_query = 'YEAR(posts.post_date), MONTH(posts.post_date), DAY(posts.post_date)';
+                
                 $date_string = $year . '-' . $month . '-01';
                 /* Set start_date for the Report */
                 $sales_by_date->start_date = strtotime(date($date_string, current_time('timestamp')));
@@ -66,6 +68,7 @@ class WC_Report_Custom_Sales_By_Date extends WC_Admin_Report {
 
                 /*  Get Required Fields of Report */
                 $output_array[$month][$year]['totalsales'] = $sales_by_date->get_report_data()->total_sales;
+            
                 $output_array[$month][$year]['netsales'] = $sales_by_date->get_report_data()->net_sales;
                 $output_array[$month][$year]['totalorders'] = $sales_by_date->get_report_data()->total_orders;
                 $output_array[$month][$year]['totalitems'] = $sales_by_date->get_report_data()->total_items;
@@ -75,8 +78,8 @@ class WC_Report_Custom_Sales_By_Date extends WC_Admin_Report {
     }
 
     /**
-    *   getTableSales : Function to Render Sales Table
-    **/
+     *   getTableSales : Function to Render Sales Table
+     * */
     public function getTableSales($sales_report_data_by_month) {
         $page = 'wc-custom-reports';
         $currency_symbol = get_woocommerce_currency_symbol();
@@ -128,7 +131,7 @@ class WC_Report_Custom_Sales_By_Date extends WC_Admin_Report {
                                             foreach ($status_array as $status_key => $status) {
                                                 /* Exclude Pending status from Status Drop Down */
                                                 if ($status_key != 'wc-pending') {
-                                                    if (isset($_REQUEST['status'])) {
+                                                    if (isset($_REQUEST['status']) && is_array($selected_status) && !empty($selected_status)) {
                                                         ?>
                                                         <option value="<?php echo $status_key; ?>" <?php echo (in_array($status_key, $selected_status)) ? 'selected' : ''; ?> ><?php echo $status; ?></option>
                                                         <?php
@@ -173,7 +176,7 @@ class WC_Report_Custom_Sales_By_Date extends WC_Admin_Report {
                 <?php
                 $month_array = ['01' => 'JAN', '02' => 'FEB', '03' => 'MAR', '04' => 'APR', '05' => 'MAY', '06' => 'JUN', '07' => 'JUL', '08' => 'AUG', '09' => 'SEP', '10' => 'OCT', '11' => 'NOV', '12' => 'DEC'];
                 $check_alternate = 1;
-                
+
                 foreach ($sales_report_data_by_month as $key => $value) {
                     foreach ($value as $inner_key => $inner_value) {
                         /* Fill Column Values for the Selected Year */
@@ -272,7 +275,7 @@ class WC_Report_Custom_Sales_By_Date extends WC_Admin_Report {
 }
 
 function woocommerce_reports_get_order_report_query_filter($query) {
-    if (isset($_REQUEST['status'])) {
+    if (isset($_REQUEST['status']) && is_array($_REQUEST['status']) && !empty($_REQUEST['status'])) {
         $selected_status = implode("','", $_REQUEST['status']);
         $query['where'] .= "AND 	posts.post_status IN ('" . $selected_status . "')";
     } else {
