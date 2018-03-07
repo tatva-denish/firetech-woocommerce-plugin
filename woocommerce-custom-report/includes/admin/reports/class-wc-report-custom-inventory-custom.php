@@ -121,8 +121,8 @@ class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
                             $variant_original_stock_total = array_sum($variant_original_stock);
                             $variant_total_sales_total = array_sum($variant_total_sales);
                             $variant_available_stock_total = array_sum($variant_available_stock);
-                            $variant_stock_sold_total = number_format((($variant_total_sales_total * 100) / $variant_original_stock_total), 2);
-                            $variant_stock_unsold_total = number_format((($variant_available_stock_total * 100) / $variant_original_stock_total), 2);
+                            $variant_stock_sold_total = ($variant_original_stock_total > 0) ? number_format((($variant_total_sales_total * 100) / $variant_original_stock_total), 2) : 0.00;
+                            $variant_stock_unsold_total = ($variant_original_stock_total > 0) ?number_format((($variant_available_stock_total * 100) / $variant_original_stock_total), 2) : 0.00;
                             if ($counter == count($arr_product['variants'])) {
                                 echo '<tr class="alternate">
                                         <td>Total</td>                                
@@ -403,11 +403,15 @@ class WC_Report_Custom_Inventory_Custom extends WC_Admin_Report {
 //                $available_stock = (isset($availability['availability'])) ? (int)$availability['availability'] : 0;
                 $available_stock = ($product->get_stock_quantity()) ? $product->get_stock_quantity() : 0;
                 $phoen_product_query = '
-                    SELECT sum(se.`meta_value`) as total FROM `wp_woocommerce_order_itemmeta` as fs LEFT Join `wp_woocommerce_order_itemmeta` as se on fs.`order_item_id` = se.`order_item_id`  WHERE fs.`meta_key` = "_variation_id" AND fs.`meta_value` = ' . $theid . ' AND se.`meta_key` ="_qty"
+                    SELECT sum(se.`meta_value`) as total FROM `'.$wpdb->prefix.'woocommerce_order_itemmeta` as fs LEFT Join `'.$wpdb->prefix.'woocommerce_order_itemmeta` as se on fs.`order_item_id` = se.`order_item_id`  WHERE fs.`meta_key` = "_variation_id" AND fs.`meta_value` = ' . $theid . ' AND se.`meta_key` ="_qty"
                     ';
                 $phoen_product_data = $wpdb->get_results($phoen_product_query, ARRAY_A);
 
-                $total_sales = ($phoen_product_data[0]['total']) ? ((int) $phoen_product_data[0]['total']) : 0;
+                if(is_array($phoen_product_data) && count($phoen_product_data) > 0){
+                    $total_sales = ($phoen_product_data[0]['total']) ? ((int) $phoen_product_data[0]['total']) : 0;
+                }else{
+                    $total_sales = 0;
+                }
                 $original_stock = $total_sales + $available_stock;
                 $stock_sold = ($original_stock > 0) ? number_format((($total_sales * 100) / $original_stock), 2) : 0.00;
                 $stock_unsold = ($original_stock > 0) ? number_format((($available_stock * 100) / $original_stock), 2) : 0.00;
